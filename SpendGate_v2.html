@@ -38,7 +38,7 @@
     .vault-mini-val { font-family:'Playfair Display',serif; font-size:.95rem; color:rgba(255,255,255,.85); margin-top:1px; }
 
     .tab-bar { display:flex; background:var(--warm); border-radius:12px; padding:4px; margin-bottom:14px; }
-    .tab-btn { flex:1; padding:8px 4px; border:none; border-radius:9px; background:transparent; font-family:'Lato',sans-serif; font-size:.72rem; font-weight:700; color:var(--light-ink); cursor:pointer; -webkit-tap-highlight-color:transparent; }
+    .tab-btn { flex:1; padding:7px 1px; border:none; border-radius:9px; background:transparent; font-family:'Lato',sans-serif; font-size:.58rem; font-weight:700; color:var(--light-ink); cursor:pointer; -webkit-tap-highlight-color:transparent; }
     .tab-btn.active { background:#fff; color:var(--earth); box-shadow:0 1px 6px rgba(92,69,48,.12); }
 
     .card { background:#fff; border-radius:16px; padding:18px; margin-bottom:12px; border:1px solid var(--warm); box-shadow:0 2px 10px rgba(92,69,48,.05); }
@@ -143,6 +143,7 @@
     .purchase-right { display:flex; align-items:center; gap:8px; flex-shrink:0; margin-left:8px; }
     .purchase-amt { font-family:'Playfair Display',serif; font-size:.95rem; font-weight:700; color:var(--rust); }
     .comment-pill { display:inline-block; padding:1px 7px; border-radius:10px; font-size:.65rem; font-weight:700; background:#fff3cd; color:#856404; }
+    .cat-pill { background:#e8f0fe; color:#2a5ab0; }
     .comment-pill.empty { background:#f8f0e8; color:var(--bark); }
     .purchase-expanded { padding:11px 13px 13px; border-top:1px solid var(--warm); }
     .existing-comment { background:var(--warm); border-radius:8px; padding:10px 12px; margin-bottom:10px; }
@@ -175,6 +176,31 @@
     .loading-dots span:nth-child(3){animation-delay:.4s}
     @keyframes blink{0%,80%,100%{opacity:0}40%{opacity:1}}
 
+
+    /* Budget tab */
+    .budget-nav-btn { background:var(--warm); border:none; border-radius:8px; width:36px; height:36px; font-size:1.2rem; color:var(--earth); cursor:pointer; font-weight:700; display:flex; align-items:center; justify-content:center; -webkit-tap-highlight-color:transparent; }
+    .budget-row { padding:10px 0; border-bottom:1px solid var(--warm); }
+    .budget-row:last-child { border-bottom:none; }
+    .budget-edit-wrap { background:var(--cream); border-radius:10px; padding:12px; margin-top:8px; }
+    .budget-save-btn { padding:10px 16px; border-radius:9px; border:none; background:var(--moss); color:#fff; font-family:'Lato',sans-serif; font-size:0.84rem; font-weight:700; cursor:pointer; white-space:nowrap; }
+    .budget-clear-btn { padding:10px 14px; border-radius:9px; border:1.5px solid var(--paper); background:transparent; color:var(--light-ink); font-family:'Lato',sans-serif; font-size:0.84rem; font-weight:700; cursor:pointer; white-space:nowrap; }
+    .bstat { border-radius:12px; padding:10px 8px; text-align:center; }
+    .bstat-label { font-size:0.6rem; text-transform:uppercase; letter-spacing:0.8px; color:var(--light-ink); font-weight:700; margin-bottom:3px; }
+    .bstat-val { font-family:'Playfair Display',serif; font-size:0.95rem; font-weight:700; line-height:1; }
+    .bstat-sub { font-size:0.6rem; color:var(--light-ink); margin-top:2px; }
+
+    /* Backup tab */
+    .backup-action-card { background:#fff; border-radius:16px; padding:18px; margin-bottom:12px; border:1px solid var(--warm); box-shadow:0 2px 10px rgba(92,69,48,.05); }
+    .backup-icon { font-size:1.8rem; flex-shrink:0; }
+    .backup-action-title { font-family:'Playfair Display',serif; font-size:0.95rem; color:var(--earth); font-weight:700; margin-bottom:3px; }
+    .backup-action-desc { font-size:0.76rem; color:var(--light-ink); line-height:1.5; }
+    .backup-btn-primary { background:var(--earth); color:#fff; font-size:0.88rem; }
+    .backup-btn-upload  { background:var(--moss);  color:#fff; font-size:0.88rem; padding:13px; border-radius:12px; border:none; font-family:'Lato',sans-serif; font-weight:700; -webkit-tap-highlight-color:transparent; }
+    .backup-btn-print   { background:var(--bark);  color:#fff; font-size:0.88rem; }
+    .backup-btn-xls     { background:#1a7f4b;      color:#fff; font-size:0.88rem; }
+    .backup-msg { border-radius:10px; padding:12px 14px; margin-bottom:12px; font-size:0.82rem; font-weight:600; }
+    .backup-msg.success { background:#edf7f0; color:var(--moss); border:1px solid #b8dfc9; }
+    .backup-msg.error   { background:#fde8e3; color:var(--rust); border:1px solid #f5cfc8; }
     .fade-in { animation:fadeIn .28s ease; }
     @keyframes fadeIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
 
@@ -213,7 +239,7 @@ const QUESTIONS = [
   {id:"thirty",icon:"📅",question:"The 30-day test",detail:"Will you still care about this purchase in 30 days?",                        options:["Yes, absolutely","Probably not"],                      caution:1},
   {id:"better",icon:"🎯",question:"Financial freedom?",detail:"Is this worth delaying your financial freedom?",options:["No, this won\u2019t hold me back","Yes, it\u2019s holding me back"],caution:1},
 ];
-const BUY_REASONS = ["Home improvement","Basic needs","Entertainment","Hobby","Critical","Other"];
+const BUY_REASONS = ["Groceries","Hobbies","Fuel","Subscriptions","Rest/take-away","Clothing/other","Other shopping","Cafe/coffee","Alcohol","Home improvement","Phone","Electronics/tech","Other"];
 
 // ─── State ───────────────────────────────────────────────────────
 // KEY DESIGN: inputs read directly from DOM, not from state.
@@ -227,13 +253,19 @@ let S = {
   history: (()=>{ try{return JSON.parse(localStorage.getItem("sg_h")||"[]")}catch{return []} })(),
   quote:null, aiQuote:null, apiLoading:false,
   showHistory:false, lastSavedIdx:null,
-  buyComment:"", buyReason:"",
+  buyComment:"", buyReason:"", buyCategory:"",
   confirmDelHist:null,
   expandedMonth:null, confirmDelSaved:null,
   expandedPurchase:null, editingPurchase:null, editComment:"", confirmDelPurchase:null,
+  budgets: (()=>{ try{return JSON.parse(localStorage.getItem("sg_budgets")||"{}")}catch{return {}} })(),
+  budgetMonth: (()=>{ const n=new Date(); return `${n.getFullYear()}-${String(n.getMonth()+1).padStart(2,"0")}`; })(),
+  editingBudgetCat:null,
+  restoreMsg:null, restoreErr:null,
+  lastBackupDate:(()=>{try{return localStorage.getItem("sg_lastbackup")||null}catch{return null}})(),
 };
 
 function persist(){ try{localStorage.setItem("sg_h",JSON.stringify(S.history))}catch{} }
+function persistBudgets(){ try{localStorage.setItem("sg_budgets",JSON.stringify(S.budgets))}catch{} }
 function set(patch){ Object.assign(S,patch); render(); }
 function setHistory(h){ S.history=h; persist(); render(); }
 
@@ -244,7 +276,7 @@ function liveBuyComment(){ return (document.getElementById("inp-buy-comment")||{
 function liveEditComment(){ return (document.getElementById("inp-edit-comment")||{value:S.editComment}).value; }
 
 const fmt = n => new Intl.NumberFormat("en-AU",{style:"currency",currency:"AUD"}).format(n||0);
-const mKey   = d => { const p=d.split("/"); return p.length===3?`${p[2]}-${p[1]}`:d; };
+const mKey   = d => { const p=d.split("/"); return p.length===3?`${p[2]}-${p[1].padStart(2,"0")}`:d; };
 const mLabel = k => { const [y,m]=k.split("-"); return new Date(+y,+m-1,1).toLocaleDateString("en-AU",{month:"long",year:"numeric"}); };
 const rand   = a => a[Math.floor(Math.random()*a.length)];
 
@@ -296,7 +328,7 @@ function exportCSV(){
 // ─── Actions ─────────────────────────────────────────────────────
 function resetFlow(){
   set({screen:"home",item:"",amount:"",answers:{},currentQ:0,
-       quote:null,aiQuote:null,lastSavedIdx:null,buyComment:"",buyReason:"",apiLoading:false});
+       quote:null,aiQuote:null,lastSavedIdx:null,buyComment:"",buyReason:"",buyCategory:"",apiLoading:false});
 }
 
 function goToQuestions(){
@@ -321,7 +353,8 @@ function handleAnswer(qIdx,ansIdx){
 
 function handleSkip(){
   const amtVal=parseFloat(S.amount); if(!amtVal) return;
-  const entry={item:S.item||"Unnamed purchase",amount:amtVal,date:new Date().toLocaleDateString("en-AU"),type:"saved",monthTransferred:false};
+  const saveCategory=S.buyCategory||"";
+  const entry={item:S.item||"Unnamed purchase",amount:amtVal,date:new Date().toLocaleDateString("en-AU"),type:"saved",monthTransferred:false,category:saveCategory};
   S.history=[entry,...S.history].slice(0,200); persist();
   S.lastSavedIdx=0; S.quote=rand(QUOTES); S.aiQuote=null; S.screen="celebrate";
   render();
@@ -393,10 +426,10 @@ function sendSmsNotifyTami(){
 
 function confirmBuyAndNotify(){
   const amtVal=parseFloat(S.amount);
-  const comment=S.buyReason==="Other"
-    ? (S.buyComment ? `Other – ${S.buyComment}` : "Other")
-    : S.buyReason || S.buyComment || "";
-  const entry={item:S.item||"Unnamed purchase",amount:amtVal,date:new Date().toLocaleDateString("en-AU"),type:"bought",comment};
+  const cat=S.buyCategory==="Other"
+    ? (S.buyComment?`Other – ${S.buyComment}`:"Other")
+    : S.buyCategory||"";
+  const entry={item:S.item||"Unnamed purchase",amount:amtVal,date:new Date().toLocaleDateString("en-AU"),type:"bought",category:cat,comment:S.buyComment||""};
   S.history=[entry,...S.history].slice(0,200); persist();
   set({screen:"notify_tami"});
 }
@@ -407,7 +440,7 @@ function handleTransferNow(){
 
 function handleRevisitSkip(idx){
   const h=S.history[idx];
-  const entry={item:h.item,amount:h.amount,date:new Date().toLocaleDateString("en-AU"),type:"saved",monthTransferred:false};
+  const entry={item:h.item,amount:h.amount,date:new Date().toLocaleDateString("en-AU"),type:"saved",monthTransferred:false,category:h.category||""};
   S.history=[entry,...S.history.filter((_,i)=>i!==idx)].slice(0,200); persist();
   S.lastSavedIdx=0; S.quote=rand(QUOTES); S.aiQuote=null;
   S.screen="celebrate"; S.item=h.item; S.amount=String(h.amount);
@@ -417,7 +450,7 @@ function handleRevisitSkip(idx){
 
 function handleRevisitBuy(idx){
   const h=S.history[idx];
-  const entry={item:h.item,amount:h.amount,date:new Date().toLocaleDateString("en-AU"),type:"bought",comment:""};
+  const entry={item:h.item,amount:h.amount,date:new Date().toLocaleDateString("en-AU"),type:"bought",category:h.category||"",comment:""};
   S.history=[entry,...S.history.filter((_,i)=>i!==idx)].slice(0,200); persist();
   resetFlow();
 }
@@ -461,16 +494,33 @@ function buildHomeScreen(){
   const decisions=history.filter(h=>h.type!=="waiting");
   const shown=(showHistory?decisions:decisions.slice(0,6));
 
+  const isOtherCat = S.buyCategory==="Other";
   const inputCard=div("card fade-in",
     el("div",{class:"card-title"},"What are you about to buy?"),
     div("input-group",
       el("label",{class:"input-label"},"Item or description"),
-      // Note: NO onInput handler — value is read on action
       el("input",{id:"inp-item",class:"input-field",placeholder:"e.g. New sneakers, takeaway\u2026",value:S.item,autocomplete:"off"})
     ),
     div("input-group",
       el("label",{class:"input-label"},"Amount (AUD $)"),
       el("input",{id:"inp-amt",class:"input-field amount-input",type:"number",placeholder:"0.00",value:S.amount,min:"0",inputmode:"decimal"})
+    ),
+    div("input-group",
+      el("label",{class:"input-label"},"Category"),
+      el("div",{id:"gate-cat-chips",class:"reason-chips"},
+        ...BUY_REASONS.map(r=>el("button",{class:"reason-chip"+(S.buyCategory===r?" active":""),
+          onClick:()=>{
+            S.buyCategory=S.buyCategory===r?"":r;
+            document.querySelectorAll("#gate-cat-chips .reason-chip").forEach((ch,i)=>{
+              ch.classList.toggle("active",BUY_REASONS[i]===S.buyCategory);
+            });
+            const ow=document.getElementById("gate-other-wrap");
+            if(ow) ow.style.display=S.buyCategory==="Other"?"block":"none";
+          }},r))
+      ),
+      el("div",{id:"gate-other-wrap",style:{display:isOtherCat?"block":"none",marginTop:"8px"}},
+        el("textarea",{id:"inp-buy-comment",class:"comment-textarea",placeholder:"Describe your reason\u2026",rows:"2"},S.buyComment)
+      )
     ),
     el("button",{class:"btn btn-primary",style:{marginTop:"4px"},onClick:goToQuestions},"Start the 3 questions \u2192")
   );
@@ -580,41 +630,19 @@ function buildDecisionScreen(){
 }
 
 function buildBuyReasonScreen(){
-  const isOther = S.buyReason==="Other";
-  const isOver100 = parseFloat(S.amount)>100;
-  const hint = isOver100
-    ? "Over $100 — Tami will need to approve this before you proceed."
-    : "Pick a category. If it\u2019s Other, add a short description.";
+  const catDisplay=S.buyCategory||(S.buyReason||"");
   return div("fade-in",div("card",
     el("div",{style:{fontSize:"1.6rem",marginBottom:"8px"}},"🛍️"),
-    el("div",{class:"card-title"},"Why are you buying this?"),
-    el("div",{style:{fontSize:"0.78rem",color:isOver100?"var(--rust)":"var(--light-ink)",marginBottom:"14px",lineHeight:"1.5",fontWeight:isOver100?"700":"400"}},hint),
-    div("item-summary",el("strong",{},S.item||"This purchase")," \u2014 ",fmt(parseFloat(S.amount)||0)),
-    div("reason-chips",
-      ...BUY_REASONS.map(r=>el("button",{class:"reason-chip"+(S.buyReason===r?" active":""),
-        onClick:()=>{
-          S.buyReason=S.buyReason===r?"":r;
-          // update chip highlights without re-render
-          document.querySelectorAll(".reason-chip").forEach((c,i)=>{
-            c.classList.toggle("active",BUY_REASONS[i]===S.buyReason);
-          });
-          // show/hide the Other textarea
-          const wrap=document.getElementById("other-wrap");
-          if(wrap) wrap.style.display=S.buyReason==="Other"?"block":"none";
-          // clear textarea if a non-Other chip selected
-          const ta=document.getElementById("inp-buy-comment");
-          if(ta&&S.buyReason!=="Other") ta.value="";
-        }},r))
-    ),
-    // "Other" description box — only visible when Other is selected
-    el("div",{id:"other-wrap",style:{display:isOther?"block":"none",marginBottom:"4px"}},
-      el("label",{class:"input-label",style:{marginBottom:"5px",display:"block"}},"Describe your reason"),
-      el("textarea",{id:"inp-buy-comment",class:"comment-textarea",placeholder:"e.g. birthday gift for a friend\u2026",rows:"3"},S.buyComment)
-    ),
+    el("div",{class:"card-title"},"Confirm purchase"),
+    div("item-summary",el("strong",{},S.item||"This purchase")," — ",fmt(parseFloat(S.amount)||0)),
+    catDisplay ? el("div",{style:{fontSize:"0.8rem",color:"var(--moss)",fontWeight:"700",marginBottom:"12px"}},"Category: ",catDisplay) : null,
+    el("div",{style:{fontSize:"0.78rem",color:"var(--light-ink)",marginBottom:"8px",lineHeight:"1.5"}},"Add a note (optional)"),
+    el("textarea",{id:"inp-buy-comment",class:"comment-textarea",placeholder:"Any notes about this purchase…",rows:"3"},S.buyComment),
     btn("btn-rust","Confirm purchase",handleBuyConfirm,{style:{marginTop:"12px"}}),
-    btn("btn-ghost","\u2190 Back",()=>set({screen:"decision"}))
+    btn("btn-ghost","← Back",()=>set({screen:"decision"}))
   ));
 }
+
 
 function buildWaitingScreen(){
   const due=new Date(Date.now()+86400000).toLocaleString("en-AU",{weekday:"short",hour:"2-digit",minute:"2-digit"});
@@ -825,7 +853,11 @@ function buildPurchasesTab(){
           el("div",{class:"purchase-header",onClick:()=>{ if(isDel) return; set({expandedPurchase:isExp?null:entry._idx,editingPurchase:null,confirmDelPurchase:null}); }},
             el("div",{style:{flex:"1",minWidth:"0"}},
               el("div",{class:"purchase-name"},entry.item),
-              div("purchase-meta",entry.date," ",entry.comment?el("span",{class:"comment-pill"},"💬 has note"):el("span",{class:"comment-pill empty"},"+ add reason"))
+              div("purchase-meta",
+                entry.date," ",
+                (entry.category&&entry.category!=="") ? el("span",{class:"comment-pill cat-pill"},entry.category.startsWith("Other")?entry.category:entry.category) : null,
+                entry.comment?el("span",{class:"comment-pill"},"💬 note"):null
+              )
             ),
             div("purchase-right",
               el("div",{class:"purchase-amt"},fmt(entry.amount)),
@@ -875,6 +907,419 @@ function buildPurchasesTab(){
   );
 }
 
+// ─── Backup & Export functions ───────────────────────────────────
+
+function backupData(){
+  const payload={
+    version:3,
+    exportedAt:new Date().toISOString(),
+    history:S.history,
+    budgets:S.budgets
+  };
+  const blob=new Blob([JSON.stringify(payload,null,2)],{type:"application/json"});
+  const url=URL.createObjectURL(blob);
+  const a=document.createElement("a");
+  a.href=url; a.download=`SpendGate_backup_${new Date().toISOString().slice(0,10)}.json`; a.click();
+  URL.revokeObjectURL(url);
+}
+
+function restoreData(file){
+  if(!file) return;
+  const reader=new FileReader();
+  reader.onload=e=>{
+    try{
+      const payload=JSON.parse(e.target.result);
+      if(!Array.isArray(payload.history)) throw new Error("Invalid backup file");
+      S.history=payload.history;
+      S.budgets=payload.budgets||{};
+      persist(); persistBudgets();
+      set({tab:"backup",restoreMsg:"✅ Backup restored successfully! "+S.history.length+" entries loaded.",restoreErr:null});
+    }catch(err){
+      set({tab:"backup",restoreMsg:null,restoreErr:"❌ Could not read backup file. Make sure you selected a valid SpendGate backup."});
+    }
+  };
+  reader.readAsText(file);
+}
+
+function exportXLS(){
+  const mm={};
+  S.history.forEach(e=>{
+    const k=mKey(e.date);
+    if(!mm[k]) mm[k]={saved:0,bought:0,transferred:false};
+    if(e.type==="saved"){mm[k].saved+=e.amount;if(e.monthTransferred)mm[k].transferred=true;}
+    else if(e.type==="bought") mm[k].bought+=e.amount;
+  });
+  // Build category spend totals per month
+  const catSpend={};
+  S.history.filter(h=>h.type==="bought").forEach(e=>{
+    const k=mKey(e.date);
+    const cat=(e.category||e.comment||"Uncategorised").split(" \u2013")[0].trim();
+    if(!catSpend[k]) catSpend[k]={};
+    catSpend[k][cat]=(catSpend[k][cat]||0)+e.amount;
+  });
+  const lines=[
+    "SpendGate Full Export","",
+    "=== ALL TRANSACTIONS ===",
+    "Date,Item,Category,Amount (AUD),Type,Note,Transferred",
+    ...S.history.filter(h=>h.type!=="waiting").map(e=>{
+      const cat=(e.category||"").split(" \u2013")[0].trim()||"";
+      const note=e.comment||"";
+      return `"${e.date}","${e.item}","${cat}","${e.amount.toFixed(2)}","${e.type==="saved"?"Saved":"Spent"}","${note}","${e.type==="bought"?"N/A":e.monthTransferred?"Yes":"No"}"`;
+    }),
+    "","=== MONTHLY SUMMARY ===",
+    "Month,Total Saved (AUD),Total Spent (AUD),Transferred to Savings",
+    ...Object.keys(mm).sort().reverse().map(k=>`"${mLabel(k)}","${mm[k].saved.toFixed(2)}","${mm[k].bought.toFixed(2)}","${mm[k].transferred?"Yes":"No"}"`),
+    "","=== SPEND BY CATEGORY (per month) ===",
+    "Month,"+[...new Set(S.history.filter(h=>h.type==="bought").map(e=>(e.category||"Uncategorised").split(" \u2013")[0].trim()))].join(","),
+    ...Object.keys(catSpend).sort().reverse().map(k=>{
+      const cats=[...new Set(S.history.filter(h=>h.type==="bought").map(e=>(e.category||"Uncategorised").split(" \u2013")[0].trim()))];
+      return `"${mLabel(k)}",`+cats.map(cat=>(catSpend[k][cat]||0).toFixed(2)).join(",");
+    }),
+    "","=== BUDGET SETTINGS ===",
+    "Month,Category,Budget (AUD)",
+    ...Object.keys(S.budgets).sort().reverse().flatMap(k=>
+      Object.entries(S.budgets[k]).map(([cat,amt])=>`"${mLabel(k)}","${cat}","${amt}"`)
+    )
+  ];
+  const blob=new Blob([lines.join("\n")],{type:"text/csv;charset=utf-8;"});
+  const url=URL.createObjectURL(blob);
+  const a=document.createElement("a"); a.href=url; a.download=`SpendGate_export_${new Date().toISOString().slice(0,10)}.csv`; a.click();
+  URL.revokeObjectURL(url);
+}
+
+function printSummary(){
+  const{saved:totalSaved,transferred:totalTransferred}=totals();
+  const totalSpent=S.history.filter(h=>h.type==="bought").reduce((s,h)=>s+h.amount,0);
+  // Build monthly rows
+  const mm={};
+  S.history.forEach(e=>{
+    if(e.type==="waiting") return;
+    const k=mKey(e.date);
+    if(!mm[k]) mm[k]={saved:0,bought:0,transferred:0};
+    if(e.type==="saved"){mm[k].saved+=e.amount;if(e.monthTransferred)mm[k].transferred+=e.amount;}
+    else if(e.type==="bought") mm[k].bought+=e.amount;
+  });
+  const monthRows=Object.keys(mm).sort().reverse().map(k=>`
+    <tr>
+      <td>${mLabel(k)}</td>
+      <td style="color:#4A7060;font-weight:700">${fmt(mm[k].saved)}</td>
+      <td style="color:#B85C38;font-weight:700">${fmt(mm[k].bought)}</td>
+      <td style="color:#4A7060">${mm[k].transferred>0?fmt(mm[k].transferred):"\u2014"}</td>
+    </tr>`).join("");
+  // Build category spend rows (all time)
+  const catTotals={};
+  S.history.filter(h=>h.type==="bought").forEach(e=>{
+    const cat=(e.category||"Uncategorised").split(" \u2013")[0].trim();
+    catTotals[cat]=(catTotals[cat]||0)+e.amount;
+  });
+  const catRows=Object.entries(catTotals).sort((a,b)=>b[1]-a[1]).map(([cat,amt])=>`
+    <tr><td>${cat}</td><td style="font-weight:700">${fmt(amt)}</td></tr>`).join("");
+
+  const html=`<!DOCTYPE html><html><head><meta charset="UTF-8">
+  <title>SpendGate Summary</title>
+  <style>
+    body{font-family:'Helvetica Neue',Arial,sans-serif;margin:0;padding:24px 32px;color:#2C1F14;background:#fff;}
+    h1{font-size:1.6rem;color:#5C4530;margin-bottom:4px;}
+    .sub{font-size:0.8rem;color:#6B5040;margin-bottom:24px;}
+    .stats{display:flex;gap:16px;margin-bottom:28px;}
+    .stat{background:#FAF6EF;border-radius:10px;padding:14px 18px;flex:1;}
+    .stat-l{font-size:0.65rem;text-transform:uppercase;letter-spacing:1px;color:#6B5040;margin-bottom:3px;}
+    .stat-v{font-size:1.3rem;font-weight:700;}
+    h2{font-size:1rem;color:#5C4530;margin:20px 0 10px;border-bottom:2px solid #EDE4D0;padding-bottom:6px;}
+    table{width:100%;border-collapse:collapse;font-size:0.85rem;}
+    th{text-align:left;padding:7px 10px;background:#EDE4D0;color:#5C4530;font-weight:700;}
+    td{padding:7px 10px;border-bottom:1px solid #F0E8D8;}
+    .footer{margin-top:32px;font-size:0.7rem;color:#999;text-align:center;}
+    @media print{body{padding:12px;}}
+  </style></head><body>
+  <h1>🏦 SpendGate Summary</h1>
+  <div class="sub">Generated ${new Date().toLocaleDateString("en-AU",{weekday:"long",year:"numeric",month:"long",day:"numeric"})}</div>
+  <div class="stats">
+    <div class="stat"><div class="stat-l">Total Saved</div><div class="stat-v" style="color:#4A7060">${fmt(totalSaved)}</div></div>
+    <div class="stat"><div class="stat-l">Total Spent</div><div class="stat-v" style="color:#B85C38">${fmt(totalSpent)}</div></div>
+    <div class="stat"><div class="stat-l">Banked</div><div class="stat-v" style="color:#4A7060">${fmt(totalTransferred)}</div></div>
+  </div>
+  <h2>Monthly Breakdown</h2>
+  <table><thead><tr><th>Month</th><th>Saved</th><th>Spent</th><th>Transferred</th></tr></thead>
+  <tbody>${monthRows||"<tr><td colspan=4>No data yet</td></tr>"}</tbody></table>
+  <h2>Spending by Category (all time)</h2>
+  <table><thead><tr><th>Category</th><th>Total Spent</th></tr></thead>
+  <tbody>${catRows||"<tr><td colspan=2>No data yet</td></tr>"}</tbody></table>
+  <div class="footer">SpendGate &mdash; Think before you spend</div>
+  </body></html>`;
+
+  const w=window.open("","_blank","width=800,height=900");
+  if(w){ w.document.write(html); w.document.close(); setTimeout(()=>w.print(),400); }
+}
+
+// ─── Tab: Backup ─────────────────────────────────────────────────
+function buildBackupTab(){
+  const {restoreMsg, restoreErr} = S;
+  const totalEntries = S.history.filter(h=>h.type!=="waiting").length;
+  const totalBudgetMonths = Object.keys(S.budgets).length;
+  const lastBackup = S.lastBackupDate || null;
+
+  return div("fade-in",
+    // Header card
+    div("card",
+      el("div",{style:{textAlign:"center",marginBottom:"4px"}},
+        el("div",{style:{fontSize:"2rem",marginBottom:"6px"}},"🗄️"),
+        el("div",{style:{fontFamily:"'Playfair Display',serif",fontSize:"1.1rem",color:"var(--earth)",marginBottom:"4px"}},"Backup & Export"),
+        el("div",{style:{fontSize:"0.75rem",color:"var(--light-ink)",lineHeight:"1.5"}},"Your data lives in this browser. Back it up regularly so you never lose it.")
+      ),
+      el("div",{style:{display:"flex",gap:"10px",justifyContent:"center",marginTop:"12px",flexWrap:"wrap"}},
+        el("div",{style:{background:"var(--warm)",borderRadius:"10px",padding:"8px 14px",fontSize:"0.72rem",color:"var(--earth)",fontWeight:"700"}},totalEntries+" entries"),
+        el("div",{style:{background:"var(--warm)",borderRadius:"10px",padding:"8px 14px",fontSize:"0.72rem",color:"var(--earth)",fontWeight:"700"}},totalBudgetMonths+" budget months"),
+        lastBackup?el("div",{style:{background:"#edf7f0",borderRadius:"10px",padding:"8px 14px",fontSize:"0.72rem",color:"var(--moss)",fontWeight:"700"}},"Last backup: "+lastBackup):null
+      )
+    ),
+
+    // Restore message
+    restoreMsg ? div("backup-msg success",restoreMsg) : null,
+    restoreErr ? div("backup-msg error",restoreErr) : null,
+
+    // 1. Backup file
+    div("backup-action-card",
+      el("div",{style:{display:"flex",gap:"14px",alignItems:"center"}},
+        el("div",{class:"backup-icon"},"💾"),
+        el("div",{style:{flex:"1"}},
+          el("div",{class:"backup-action-title"},"1. Back up data"),
+          el("div",{class:"backup-action-desc"},"Download a JSON file with all your history, saves, purchases and budget settings. Keep it somewhere safe.")
+        )
+      ),
+      el("button",{class:"btn backup-btn-primary",style:{marginTop:"12px"},onClick:()=>{
+        const d=new Date().toLocaleDateString("en-AU");
+        S.lastBackupDate=d; try{localStorage.setItem("sg_lastbackup",d)}catch{}
+        backupData(); render();
+      }},"⬇️ Download backup file")
+    ),
+
+    // 2. Restore backup
+    div("backup-action-card",
+      el("div",{style:{display:"flex",gap:"14px",alignItems:"center"}},
+        el("div",{class:"backup-icon"},"📂"),
+        el("div",{style:{flex:"1"}},
+          el("div",{class:"backup-action-title"},"2. Restore from backup"),
+          el("div",{class:"backup-action-desc"},"Upload a previously saved backup file to restore your data. This will replace your current data.")
+        )
+      ),
+      el("label",{class:"btn backup-btn-upload",style:{marginTop:"12px",display:"block",textAlign:"center",cursor:"pointer"}},
+        "⬆️ Choose backup file to restore",
+        el("input",{type:"file",accept:".json",style:{display:"none"},onChange:e=>restoreData(e.target.files[0])})
+      )
+    ),
+
+    // 3. Print summary PDF
+    div("backup-action-card",
+      el("div",{style:{display:"flex",gap:"14px",alignItems:"center"}},
+        el("div",{class:"backup-icon"},"🖨️"),
+        el("div",{style:{flex:"1"}},
+          el("div",{class:"backup-action-title"},"3. Print summary"),
+          el("div",{class:"backup-action-desc"},"Opens a print-ready page with your monthly breakdown, category totals and savings overview. Save as PDF from the print dialog.")
+        )
+      ),
+      el("button",{class:"btn backup-btn-print",style:{marginTop:"12px"},onClick:printSummary},"🖨️ Print / Save as PDF")
+    ),
+
+    // 4. Export to XLS/CSV
+    div("backup-action-card",
+      el("div",{style:{display:"flex",gap:"14px",alignItems:"center"}},
+        el("div",{class:"backup-icon"},"📊"),
+        el("div",{style:{flex:"1"}},
+          el("div",{class:"backup-action-title"},"4. Export to Excel / CSV"),
+          el("div",{class:"backup-action-desc"},"Download a full CSV with all transactions, monthly totals, category breakdowns and budget settings. Opens directly in Excel.")
+        )
+      ),
+      el("button",{class:"btn backup-btn-xls",style:{marginTop:"12px"},onClick:exportXLS},"⬇️ Export to Excel / CSV")
+    )
+  );
+}
+
+
+function buildBudgetTab(){
+  const {budgetMonth, budgets, editingBudgetCat, history} = S;
+  const [y,m] = budgetMonth.split("-").map(Number);
+  const prevMonth = m===1 ? `${y-1}-12` : `${y}-${String(m-1).padStart(2,"0")}`;
+  const nextMonth = m===12? `${y+1}-01` : `${y}-${String(m+1).padStart(2,"0")}`;
+  const now = new Date();
+  const nowKey = `${now.getFullYear()}-${String(now.getMonth()+1).padStart(2,"0")}`;
+  const isCurrentMonth = budgetMonth===nowKey;
+  const monthBudget = budgets[budgetMonth] || {};
+
+  const spent = {};
+  BUY_REASONS.forEach(r => spent[r]=0);
+  history.forEach(e=>{
+    if(e.type!=="bought") return;
+    if(mKey(e.date)!==budgetMonth) return;
+    // category field is the canonical source; fall back to comment for legacy entries
+    const rawCat = (e.category || e.comment || "").trim();
+    const cat = rawCat.startsWith("Other") ? "Other"
+      : BUY_REASONS.filter(r=>r!=="Other").includes(rawCat) ? rawCat : null;
+    if(cat) spent[cat]=(spent[cat]||0)+e.amount;
+  });
+
+  const bankedSavings = history
+    .filter(e=>e.type==="saved"&&e.monthTransferred&&mKey(e.date)===budgetMonth)
+    .reduce((s,e)=>s+e.amount,0);
+
+  const totalBudget  = Object.values(monthBudget).reduce((s,v)=>s+(parseFloat(v)||0),0);
+  const totalSpent   = Object.values(spent).reduce((s,v)=>s+v,0);
+  const savingTarget = totalBudget>0 ? totalBudget*0.30 : 0;
+  const spendLimit   = totalBudget - savingTarget;
+  const overBudget   = totalSpent > spendLimit;
+  const savingOnTrack= bankedSavings >= savingTarget && savingTarget>0;
+  const SPEND_CATS   = BUY_REASONS.filter(r=>r!=="Other");
+
+  const summaryCard = totalBudget>0 ? (()=>{
+    const spendPct = Math.min(100,(totalSpent/spendLimit)*100);
+    const savePct  = Math.min(100,savingTarget>0?(bankedSavings/savingTarget)*100:0);
+    return el("div",{},
+      el("div",{style:{display:"grid",gridTemplateColumns:"1fr 1fr 1fr",gap:"8px",marginBottom:"12px"}},
+        el("div",{class:"bstat",style:{background:overBudget?"#fde8e3":"#edf7f0"}},
+          el("div",{class:"bstat-label"},"Spent"),
+          el("div",{class:"bstat-val",style:{color:overBudget?"var(--rust)":"var(--moss)"}},fmt(totalSpent)),
+          el("div",{class:"bstat-sub"},"of "+fmt(spendLimit))
+        ),
+        el("div",{class:"bstat",style:{background:savingOnTrack?"#edf7f0":"#fffdf5"}},
+          el("div",{class:"bstat-label"},"30% Target"),
+          el("div",{class:"bstat-val",style:{color:"var(--bark)"}},fmt(savingTarget)),
+          el("div",{class:"bstat-sub"},savingOnTrack?"✓ reached":"goal")
+        ),
+        el("div",{class:"bstat",style:{background:bankedSavings>0?"#edf7f0":"var(--warm)"}},
+          el("div",{class:"bstat-label"},"Banked"),
+          el("div",{class:"bstat-val",style:{color:"var(--moss)"}},fmt(bankedSavings)),
+          el("div",{class:"bstat-sub"},"transferred")
+        )
+      ),
+      div("card",{style:{padding:"14px 16px"}},
+        el("div",{style:{fontSize:"0.7rem",color:"var(--light-ink)",marginBottom:"8px",display:"flex",justifyContent:"space-between"}},
+          el("span",{},"Spending: ",el("strong",{style:{color:overBudget?"var(--rust)":"var(--ink)"}},fmt(totalSpent))),
+          el("span",{},"Limit: ",el("strong",{style:{color:"var(--ink)"}},fmt(spendLimit)))
+        ),
+        el("div",{style:{position:"relative",height:"14px",background:"var(--warm)",borderRadius:"8px",overflow:"visible",marginBottom:"26px"}},
+          el("div",{style:{
+            position:"absolute",left:"0",top:"0",height:"100%",borderRadius:"8px",
+            width:`${Math.min(100,(totalSpent/totalBudget)*100)}%`,
+            background:overBudget?"var(--rust)":spendPct>=80?"var(--gold)":"var(--moss)",
+            transition:"width 0.4s ease"
+          }}),
+          el("div",{style:{position:"absolute",top:"-5px",bottom:"-5px",left:"70%",width:"2px",background:"var(--bark)",borderRadius:"2px",zIndex:"2"}}),
+          el("div",{style:{position:"absolute",top:"20px",left:"70%",transform:"translateX(-50%)",fontSize:"0.58rem",fontWeight:"700",color:"var(--bark)",whiteSpace:"nowrap"}},"↓ 30% saving target")
+        ),
+        el("div",{style:{fontSize:"0.7rem",color:"var(--light-ink)",marginBottom:"6px",display:"flex",justifyContent:"space-between"}},
+          el("span",{},"Banked: ",el("strong",{style:{color:"var(--moss)"}},fmt(bankedSavings))),
+          el("span",{},"Target: ",el("strong",{style:{color:"var(--bark)"}},fmt(savingTarget)," (30%)"))
+        ),
+        el("div",{style:{position:"relative",height:"10px",background:"var(--warm)",borderRadius:"8px",overflow:"hidden"}},
+          el("div",{style:{
+            position:"absolute",left:"0",top:"0",height:"100%",borderRadius:"8px",
+            width:`${savePct}%`,
+            background:savingOnTrack?"var(--moss)":"var(--gold)",
+            transition:"width 0.4s ease"
+          }})
+        ),
+        savingOnTrack
+          ? el("div",{style:{fontSize:"0.7rem",color:"var(--moss)",fontWeight:"700",marginTop:"6px",textAlign:"right"}},"✓ 30% saving goal reached!")
+          : el("div",{style:{fontSize:"0.7rem",color:"var(--light-ink)",marginTop:"6px",textAlign:"right"}},
+              fmt(Math.max(0,savingTarget-bankedSavings))+" still to bank for 30%")
+      )
+    );
+  })() : null;
+
+  const categoryCard = div("card",
+    el("div",{style:{display:"flex",justifyContent:"space-between",alignItems:"center",marginBottom:"12px"}},
+      el("div",{class:"card-title",style:{margin:"0"}},"Category Budgets"),
+      el("div",{style:{fontSize:"0.68rem",color:"var(--light-ink)"}},"Tap to set amount")
+    ),
+    ...SPEND_CATS.map(cat=>{
+      const budget   = parseFloat(monthBudget[cat])||0;
+      const catSpent = spent[cat]||0;
+      const catPct   = budget>0 ? Math.min(100,(catSpent/budget)*100) : 0;
+      const isEditing= editingBudgetCat===cat;
+      const isOver   = budget>0 && catSpent>budget;
+      return el("div",{class:"budget-row"},
+        el("div",{style:{display:"flex",alignItems:"center",justifyContent:"space-between",cursor:"pointer"},
+          onClick:()=>set({editingBudgetCat:isEditing?null:cat})},
+          el("div",{style:{flex:"1"}},
+            el("div",{style:{fontSize:"0.84rem",fontWeight:"700",color:"var(--ink)"}},cat),
+            el("div",{style:{fontSize:"0.68rem",color:"var(--light-ink)",marginTop:"2px"}},
+              budget>0
+                ? `${fmt(catSpent)} spent of ${fmt(budget)}`
+                : catSpent>0 ? `${fmt(catSpent)} spent — no budget set` : "No budget set"
+            )
+          ),
+          el("div",{style:{display:"flex",alignItems:"center",gap:"8px",flexShrink:"0"}},
+            budget>0
+              ? el("div",{style:{fontFamily:"'Playfair Display',serif",fontSize:"0.9rem",fontWeight:"700",color:isOver?"var(--rust)":"var(--earth)"}},fmt(budget))
+              : el("div",{style:{fontSize:"0.72rem",color:"var(--bark)",fontStyle:"italic"}},"+ add"),
+            el("span",{style:{fontSize:"0.7rem",color:"var(--light-ink)"}},isEditing?"▲":"▼")
+          )
+        ),
+        budget>0 ? el("div",{style:{position:"relative",height:"4px",background:"var(--warm)",borderRadius:"4px",margin:"6px 0 2px",overflow:"hidden"}},
+          el("div",{style:{
+            position:"absolute",left:"0",top:"0",height:"100%",borderRadius:"4px",
+            width:`${catPct}%`,
+            background:isOver?"var(--rust)":catPct>=80?"var(--gold)":"var(--moss)"
+          }})
+        ) : null,
+        isEditing ? el("div",{class:"budget-edit-wrap"},
+          el("label",{class:"input-label"},"Monthly budget for "+cat+" ($)"),
+          el("div",{style:{display:"flex",gap:"8px",alignItems:"center"}},
+            el("input",{
+              id:`budget-inp-${cat.replace(/\W/g,"_")}`,
+              class:"input-field",type:"number",placeholder:"e.g. 200",
+              style:{flex:"1"},inputmode:"decimal",value:budget||""
+            }),
+            el("button",{class:"budget-save-btn",onClick:()=>{
+              const inpId=`budget-inp-${cat.replace(/\W/g,"_")}`;
+              const val=parseFloat((document.getElementById(inpId)||{value:""}).value)||0;
+              if(!S.budgets[budgetMonth]) S.budgets[budgetMonth]={};
+              if(val===0) delete S.budgets[budgetMonth][cat];
+              else S.budgets[budgetMonth][cat]=val;
+              persistBudgets();
+              set({editingBudgetCat:null});
+            }},"Save"),
+            budget>0 ? el("button",{class:"budget-clear-btn",onClick:e=>{
+              e.stopPropagation();
+              if(S.budgets[budgetMonth]) delete S.budgets[budgetMonth][cat];
+              persistBudgets();
+              set({editingBudgetCat:null});
+            }},"Clear") : null
+          )
+        ) : null
+      );
+    })
+  );
+
+  const copyCard = !totalBudget && budgetMonth!==prevMonth ? (()=>{
+    const prevBudget = budgets[prevMonth];
+    if(!prevBudget||!Object.keys(prevBudget).length) return null;
+    return div("card",{style:{textAlign:"center",padding:"14px 18px"}},
+      el("div",{style:{fontSize:"0.8rem",color:"var(--light-ink)",marginBottom:"10px"}},"Copy last month’s budgets as a starting point?"),
+      el("button",{class:"btn btn-primary",style:{marginTop:"0"},onClick:()=>{
+        S.budgets[budgetMonth]={...prevBudget};
+        persistBudgets(); render();
+      }},"Copy from "+mLabel(prevMonth))
+    );
+  })() : null;
+
+  return div("fade-in",
+    div("card",
+      el("div",{style:{display:"flex",alignItems:"center",justifyContent:"space-between"}},
+        el("button",{class:"budget-nav-btn",onClick:()=>set({budgetMonth:prevMonth,editingBudgetCat:null})},"‹"),
+        el("div",{style:{fontFamily:"'Playfair Display',serif",fontSize:"1rem",color:"var(--earth)",fontWeight:"700",textAlign:"center"}},
+          mLabel(budgetMonth),
+          isCurrentMonth ? el("span",{style:{display:"block",fontSize:"0.65rem",color:"var(--moss)",fontWeight:"700",letterSpacing:"0.8px",textTransform:"uppercase",marginTop:"2px"}},"Current month") : null
+        ),
+        el("button",{class:"budget-nav-btn",onClick:()=>set({budgetMonth:nextMonth,editingBudgetCat:null})},"›")
+      )
+    ),
+    summaryCard,
+    categoryCard,
+    copyCard
+  );
+}
+
 // ─── Main Render ─────────────────────────────────────────────────
 function render(){
   const{tab,screen}=S;
@@ -905,6 +1350,8 @@ function render(){
     <button class="tab-btn${tab==="gate"?" active":""}" onclick="set({tab:'gate'})">🛑 Gate</button>
     <button class="tab-btn${tab==="monthly"?" active":""}" onclick="set({tab:'monthly'})">📊 Savings</button>
     <button class="tab-btn${tab==="purchases"?" active":""}" onclick="set({tab:'purchases'})">🛍️ Purchases</button>
+    <button class="tab-btn${tab==="budget"?" active":""}" onclick="set({tab:'budget'})">💰 Budget</button>
+    <button class="tab-btn${tab==="backup"?" active":""}" onclick="set({tab:'backup'})">🗄️ Backup</button>
   </div>`;
 
   // Content
@@ -926,8 +1373,12 @@ function render(){
     else if(screen==="celebrate")     content=buildCelebrateScreen();
   } else if(tab==="monthly"){
     content=buildMonthlyTab();
-  } else {
+  } else if(tab==="purchases"){
     content=buildPurchasesTab();
+  } else if(tab==="budget"){
+    content=buildBudgetTab();
+  } else if(tab==="backup"){
+    content=buildBackupTab();
   }
   if(content) ca.appendChild(content);
 }
