@@ -1,0 +1,771 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="default" />
+  <meta name="apple-mobile-web-app-title" content="SpendGate" />
+  <meta name="theme-color" content="#5C4530" />
+  <title>SpendGate</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,500;0,700;1,500&family=Lato:wght@300;400;700&display=swap" rel="stylesheet" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    :root {
+      --cream: #FAF6EF; --warm: #F0E8D8; --paper: #EDE4D0;
+      --bark: #8B6F47; --earth: #5C4530; --moss: #4A7060;
+      --gold: #C9924A; --rust: #B85C38; --ink: #2C1F14; --light-ink: #6B5040;
+      --safe-top: env(safe-area-inset-top, 0px);
+      --safe-bottom: env(safe-area-inset-bottom, 0px);
+    }
+    html, body { height: 100%; }
+    body { background: var(--cream); font-family: 'Lato', sans-serif; color: var(--ink); -webkit-text-size-adjust: 100%; }
+    #app { max-width: 480px; margin: 0 auto; padding: calc(var(--safe-top) + 12px) 14px calc(var(--safe-bottom) + 60px); }
+
+    .header { text-align: center; padding: 18px 0 14px; }
+    .header-icon { font-size: 1.9rem; margin-bottom: 4px; }
+    .header h1 { font-family: 'Playfair Display', serif; font-size: 1.5rem; color: var(--earth); }
+    .header p { font-size: 0.68rem; color: var(--light-ink); font-weight: 300; margin-top: 3px; letter-spacing: 0.5px; text-transform: uppercase; }
+
+    .vault-card { background: var(--earth); border-radius: 18px; padding: 18px 20px; margin-bottom: 14px; position: relative; overflow: hidden; }
+    .vault-card::before { content:''; position:absolute; top:-30px; right:-30px; width:120px; height:120px; border-radius:50%; background:rgba(255,255,255,0.04); }
+    .vault-label { font-size:.65rem; color:rgba(255,255,255,.5); text-transform:uppercase; letter-spacing:1.5px; margin-bottom:2px; }
+    .vault-amount { font-family:'Playfair Display',serif; font-size:2.1rem; color:#fff; font-weight:700; line-height:1; }
+    .vault-sub { font-size:.68rem; color:rgba(255,255,255,.4); margin-top:3px; }
+    .vault-row { display:flex; gap:20px; margin-top:11px; padding-top:11px; border-top:1px solid rgba(255,255,255,.1); }
+    .vault-mini-label { font-size:.62rem; color:rgba(255,255,255,.45); text-transform:uppercase; letter-spacing:1px; }
+    .vault-mini-val { font-family:'Playfair Display',serif; font-size:.95rem; color:rgba(255,255,255,.85); margin-top:1px; }
+
+    .tab-bar { display:flex; background:var(--warm); border-radius:12px; padding:4px; margin-bottom:14px; }
+    .tab-btn { flex:1; padding:8px 4px; border:none; border-radius:9px; background:transparent; font-family:'Lato',sans-serif; font-size:.72rem; font-weight:700; color:var(--light-ink); cursor:pointer; -webkit-tap-highlight-color:transparent; }
+    .tab-btn.active { background:#fff; color:var(--earth); box-shadow:0 1px 6px rgba(92,69,48,.12); }
+
+    .card { background:#fff; border-radius:16px; padding:18px; margin-bottom:12px; border:1px solid var(--warm); box-shadow:0 2px 10px rgba(92,69,48,.05); }
+    .card-title { font-family:'Playfair Display',serif; font-size:.98rem; color:var(--earth); margin-bottom:12px; }
+
+    .input-group { margin-bottom:10px; }
+    .input-label { display:block; font-size:.65rem; color:var(--light-ink); text-transform:uppercase; letter-spacing:.8px; margin-bottom:5px; font-weight:700; }
+    /* font-size 16px prevents iOS zoom on focus */
+    .input-field { width:100%; padding:12px 13px; border:1.5px solid var(--paper); border-radius:10px; font-family:'Lato',sans-serif; font-size:16px; color:var(--ink); background:var(--cream); outline:none; -webkit-appearance:none; }
+    .input-field:focus { border-color:var(--bark); }
+    .amount-input { font-size:1.4rem; font-family:'Playfair Display',serif; font-weight:700; color:var(--earth); }
+
+    .btn { width:100%; padding:14px; border-radius:12px; border:none; font-family:'Lato',sans-serif; font-size:.95rem; font-weight:700; cursor:pointer; display:block; text-align:center; -webkit-tap-highlight-color:transparent; margin-top:8px; }
+    .btn-primary { background:var(--earth); color:#fff; }
+    .btn-moss  { background:var(--moss); color:#fff; margin-top:0; }
+    .btn-rust  { background:var(--rust); color:#fff; }
+    .btn-wait  { background:#f5f0e8; color:var(--bark); border:1.5px solid var(--paper); }
+    .btn-ghost { background:transparent; color:var(--light-ink); border:1.5px solid var(--paper); }
+    .btn-export { background:var(--warm); color:var(--earth); border:1.5px solid var(--paper); font-size:.85rem; }
+    .btn:disabled { opacity:.35; cursor:not-allowed; }
+    .btn-transfer { width:100%; padding:12px 14px; border-radius:10px; border:2px dashed var(--bark); background:transparent; font-family:'Lato',sans-serif; font-size:.82rem; font-weight:700; color:var(--bark); cursor:pointer; text-align:center; display:block; -webkit-tap-highlight-color:transparent; }
+    .transfer-done { text-align:center; font-size:.82rem; color:var(--moss); font-weight:700; padding:10px; background:#edf7f0; border-radius:8px; }
+    .transfer-cta { width:100%; padding:14px; border:2px dashed var(--bark); border-radius:12px; background:transparent; font-family:'Lato',sans-serif; cursor:pointer; text-align:center; margin-bottom:10px; display:block; -webkit-tap-highlight-color:transparent; }
+    .transfer-cta-label { font-size:.68rem; color:var(--light-ink); text-transform:uppercase; letter-spacing:.8px; margin-bottom:3px; }
+    .transfer-cta-text { font-size:.86rem; font-weight:700; color:var(--bark); }
+
+    .stat-grid { display:grid; grid-template-columns:1fr 1fr; gap:10px; margin-bottom:14px; }
+    .stat-box { background:var(--earth); border-radius:14px; padding:14px; }
+    .stat-box.green { background:var(--moss); }
+    .stat-box.rust  { background:var(--rust); }
+    .stat-box.bark  { background:var(--bark); }
+    .stat-label { font-size:.62rem; color:rgba(255,255,255,.5); text-transform:uppercase; letter-spacing:1px; margin-bottom:2px; }
+    .stat-val { font-family:'Playfair Display',serif; font-size:1.25rem; color:#fff; font-weight:700; }
+
+    .q-progress { display:flex; gap:6px; margin-bottom:16px; }
+    .q-dot { height:4px; flex:1; border-radius:4px; background:var(--paper); }
+    .q-dot.active { background:var(--bark); }
+    .q-dot.done   { background:var(--moss); }
+    .q-icon   { font-size:1.8rem; margin-bottom:8px; display:block; }
+    .q-text   { font-family:'Playfair Display',serif; font-size:1.08rem; color:var(--earth); margin-bottom:4px; }
+    .q-detail { font-size:.78rem; color:var(--light-ink); line-height:1.5; margin-bottom:15px; }
+    .q-btn { width:100%; padding:13px; border-radius:11px; border:1.5px solid var(--paper); background:var(--cream); font-family:'Lato',sans-serif; font-size:.88rem; color:var(--ink); cursor:pointer; text-align:left; margin-bottom:8px; display:flex; align-items:center; gap:10px; -webkit-tap-highlight-color:transparent; }
+    .q-num { width:24px; height:24px; border-radius:50%; background:var(--paper); display:flex; align-items:center; justify-content:center; font-size:.68rem; font-weight:700; color:var(--light-ink); flex-shrink:0; }
+
+    .caution-bar { display:flex; gap:6px; margin-bottom:13px; }
+    .caution-pip { flex:1; height:6px; border-radius:4px; background:var(--paper); }
+    .caution-pip.lit { background:var(--rust); }
+    .decision-msg { font-family:'Playfair Display',serif; font-size:1.08rem; line-height:1.5; color:var(--earth); margin-bottom:4px; }
+    .decision-sub { font-size:.76rem; color:var(--light-ink); margin-bottom:14px; line-height:1.5; }
+    .item-summary { background:var(--warm); border-radius:10px; padding:11px; margin-bottom:14px; font-size:.84rem; color:var(--earth); }
+
+    .reason-chips { display:flex; flex-wrap:wrap; gap:7px; margin-bottom:12px; }
+    .reason-chip { padding:8px 12px; border-radius:20px; border:1.5px solid var(--paper); background:var(--cream); font-family:'Lato',sans-serif; font-size:.78rem; color:var(--light-ink); cursor:pointer; font-weight:600; -webkit-tap-highlight-color:transparent; }
+    .reason-chip.active { border-color:var(--rust); background:#fde8e3; color:var(--rust); }
+    /* font-size 16px prevents iOS keyboard dismiss */
+    .comment-textarea { width:100%; padding:11px 13px; border:1.5px solid var(--paper); border-radius:10px; font-family:'Lato',sans-serif; font-size:16px; color:var(--ink); background:var(--cream); outline:none; resize:none; line-height:1.5; }
+    .comment-textarea:focus { border-color:var(--bark); }
+    .btn-row { display:flex; gap:8px; margin-top:8px; }
+    .btn-save-comment   { flex:1; padding:10px; border-radius:10px; border:none; background:var(--rust); color:#fff; font-family:'Lato',sans-serif; font-size:.84rem; font-weight:700; cursor:pointer; }
+    .btn-cancel-comment { flex:1; padding:10px; border-radius:10px; border:1.5px solid var(--paper); background:transparent; color:var(--light-ink); font-family:'Lato',sans-serif; font-size:.84rem; font-weight:700; cursor:pointer; }
+
+    .celebrate-amount { font-family:'Playfair Display',serif; font-size:2.5rem; font-weight:700; color:var(--moss); text-align:center; margin:5px 0; }
+    .quote-block { background:var(--warm); border-left:3px solid var(--gold); border-radius:0 10px 10px 0; padding:12px 14px; margin:13px 0; }
+    .quote-text { font-family:'Playfair Display',serif; font-style:italic; font-size:.88rem; color:var(--earth); line-height:1.6; }
+    .quote-author { font-size:.66rem; color:var(--light-ink); margin-top:5px; text-transform:uppercase; letter-spacing:.8px; }
+
+    .history-item { display:flex; align-items:center; justify-content:space-between; padding:9px 0; border-bottom:1px solid var(--warm); }
+    .history-item:last-child { border-bottom:none; }
+    .history-name { font-size:.82rem; color:var(--ink); font-weight:700; }
+    .history-date { font-size:.66rem; color:var(--light-ink); margin-top:1px; }
+    .history-right { display:flex; align-items:center; flex-shrink:0; gap:4px; }
+    .history-amt { font-family:'Playfair Display',serif; font-size:.86rem; font-weight:700; color:var(--earth); }
+    .history-badge { font-size:.66rem; font-weight:700; padding:2px 7px; border-radius:20px; }
+    .badge-saved  { background:#e8f5e9; color:var(--moss); }
+    .badge-bought { background:#fde8e3; color:var(--rust); }
+    .toggle-hist { background:none; border:none; color:var(--bark); font-size:.76rem; cursor:pointer; font-family:'Lato',sans-serif; text-decoration:underline; padding:3px 0; }
+
+    .del-btn { background:none; border:none; font-size:1rem; cursor:pointer; padding:4px 6px; border-radius:6px; opacity:.4; line-height:1; -webkit-tap-highlight-color:transparent; }
+    .del-confirm-row { background:#fff8f6; border:1px solid #f5cfc8; border-radius:10px; padding:10px 12px; margin-top:4px; display:flex; align-items:center; justify-content:space-between; gap:8px; margin-bottom:4px; }
+    .del-confirm-text { font-size:.78rem; color:var(--ink); font-weight:600; }
+    .del-yes { padding:7px 14px; border-radius:8px; border:none; background:var(--rust); color:#fff; font-family:'Lato',sans-serif; font-size:.76rem; font-weight:700; cursor:pointer; }
+    .del-no  { padding:7px 14px; border-radius:8px; border:1.5px solid var(--paper); background:transparent; color:var(--light-ink); font-family:'Lato',sans-serif; font-size:.76rem; font-weight:700; cursor:pointer; }
+
+    .month-header { display:flex; justify-content:space-between; align-items:flex-start; margin-bottom:10px; }
+    .month-name { font-family:'Playfair Display',serif; font-size:.98rem; color:var(--earth); font-weight:700; }
+    .month-sub  { font-size:.7rem; color:var(--light-ink); margin-top:2px; }
+    .month-amt  { font-family:'Playfair Display',serif; font-size:1.25rem; color:var(--moss); font-weight:700; }
+    .month-toggle { background:none; border:none; font-size:.68rem; color:var(--bark); cursor:pointer; text-decoration:underline; font-family:'Lato',sans-serif; font-weight:700; padding:0; margin-top:3px; display:block; text-align:right; }
+    .progress-bar { background:var(--warm); border-radius:6px; height:6px; margin-bottom:12px; }
+    .progress-fill { height:100%; border-radius:6px; }
+    .saved-item-row { display:flex; align-items:center; justify-content:space-between; padding:8px 0; border-bottom:1px solid var(--warm); }
+    .saved-item-row:last-child { border-bottom:none; }
+    .saved-item-name { font-size:.82rem; font-weight:700; color:var(--ink); }
+    .saved-item-date { font-size:.66rem; color:var(--light-ink); margin-top:1px; }
+    .saved-item-amt  { font-family:'Playfair Display',serif; font-size:.9rem; font-weight:700; color:var(--moss); }
+
+    .month-divider { font-size:.68rem; text-transform:uppercase; letter-spacing:1.2px; color:var(--light-ink); font-weight:700; margin:14px 0 8px; }
+    .purchase-card { background:#fff; border-radius:14px; border:1px solid var(--warm); margin-bottom:8px; box-shadow:0 1px 6px rgba(92,69,48,.04); overflow:hidden; }
+    .purchase-header { display:flex; justify-content:space-between; align-items:flex-start; padding:13px 13px 11px; cursor:pointer; }
+    .purchase-name { font-size:.88rem; font-weight:700; color:var(--ink); }
+    .purchase-meta { font-size:.68rem; color:var(--light-ink); margin-top:3px; display:flex; align-items:center; gap:6px; flex-wrap:wrap; }
+    .purchase-right { display:flex; align-items:center; gap:8px; flex-shrink:0; margin-left:8px; }
+    .purchase-amt { font-family:'Playfair Display',serif; font-size:.95rem; font-weight:700; color:var(--rust); }
+    .comment-pill { display:inline-block; padding:1px 7px; border-radius:10px; font-size:.65rem; font-weight:700; background:#fff3cd; color:#856404; }
+    .comment-pill.empty { background:#f8f0e8; color:var(--bark); }
+    .purchase-expanded { padding:11px 13px 13px; border-top:1px solid var(--warm); }
+    .existing-comment { background:var(--warm); border-radius:8px; padding:10px 12px; margin-bottom:10px; }
+    .existing-comment-label { font-size:.62rem; text-transform:uppercase; letter-spacing:.8px; color:var(--light-ink); margin-bottom:4px; font-weight:700; }
+    .existing-comment-text { font-family:'Playfair Display',serif; font-style:italic; font-size:.88rem; color:var(--earth); line-height:1.5; }
+    .no-comment-msg { font-size:.8rem; color:var(--light-ink); margin-bottom:10px; }
+    .btn-edit-comment { width:100%; padding:9px; border-radius:9px; border:1.5px solid var(--paper); background:var(--cream); font-family:'Lato',sans-serif; font-size:.8rem; font-weight:700; color:var(--bark); cursor:pointer; }
+    .del-confirm-inner { padding:10px 13px 13px; border-top:1px solid var(--warm); background:#fff8f6; }
+    .nudge-banner { background:#fff8ec; border:1px solid #f0d99a; border-radius:10px; padding:10px 14px; font-size:.78rem; color:var(--bark); margin-bottom:12px; font-weight:600; }
+
+    .wait-pill { display:inline-block; background:var(--warm); border:1px solid var(--paper); border-radius:20px; padding:6px 14px; font-size:.76rem; color:var(--bark); font-weight:700; margin-bottom:16px; }
+    .revisit-card { border-color:#e8d5a3 !important; background:#fffdf5 !important; }
+    .revisit-item { padding:10px 0; border-bottom:1px solid #f0e8d0; }
+    .revisit-item:last-child { border-bottom:none; padding-bottom:0; }
+    .revisit-name { font-size:.86rem; font-weight:700; color:var(--ink); }
+    .revisit-meta { font-size:.72rem; color:var(--light-ink); margin-top:2px; margin-bottom:8px; }
+    .revisit-ready   { color:var(--moss); font-weight:700; }
+    .revisit-waiting { color:var(--bark); font-weight:700; }
+    .revisit-btns { display:flex; gap:7px; }
+    .revisit-btn-save { flex:1; padding:9px; border-radius:9px; border:none; background:var(--moss); color:#fff; font-family:'Lato',sans-serif; font-size:.78rem; font-weight:700; cursor:pointer; }
+    .revisit-btn-buy  { flex:1; padding:9px; border-radius:9px; border:none; background:var(--rust); color:#fff; font-family:'Lato',sans-serif; font-size:.78rem; font-weight:700; cursor:pointer; }
+    .revisit-btn-del  { padding:9px 12px; border-radius:9px; border:1.5px solid var(--paper); background:transparent; color:var(--light-ink); font-family:'Lato',sans-serif; font-size:.76rem; font-weight:700; cursor:pointer; }
+
+    .coin-rain { position:fixed; top:0; left:0; right:0; height:100vh; pointer-events:none; z-index:100; overflow:hidden; }
+    .coin { position:absolute; top:-40px; font-size:1.5rem; animation:coinFall linear forwards; }
+    @keyframes coinFall { 0%{top:-40px;opacity:1;transform:rotate(0deg)} 80%{opacity:1} 100%{top:100vh;opacity:0;transform:rotate(360deg)} }
+
+    .loading-dots span { animation:blink 1.2s infinite; opacity:0; }
+    .loading-dots span:nth-child(2){animation-delay:.2s}
+    .loading-dots span:nth-child(3){animation-delay:.4s}
+    @keyframes blink{0%,80%,100%{opacity:0}40%{opacity:1}}
+
+    .fade-in { animation:fadeIn .28s ease; }
+    @keyframes fadeIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
+  </style>
+</head>
+<body>
+<div id="header-area"></div>
+<div id="vault-area"></div>
+<div id="tab-bar-area"></div>
+<div id="content-area"></div>
+
+<script>
+// ─── Constants ───────────────────────────────────────────────────
+const QUOTES = [
+  {text:"A penny saved is a penny earned.",author:"Benjamin Franklin"},
+  {text:"Beware of little expenses; a small leak will sink a great ship.",author:"Benjamin Franklin"},
+  {text:"Do not save what is left after spending, but spend what is left after saving.",author:"Warren Buffett"},
+  {text:"The habit of saving is itself an education; it fosters every virtue, teaches self-denial.",author:"T.T. Munger"},
+  {text:"It's not your salary that makes you rich, it's your spending habits.",author:"Charles A. Jaffe"},
+  {text:"Wealth consists not in having great possessions, but in having few wants.",author:"Epictetus"},
+  {text:"Too many people spend money they haven't earned to buy things they don't want.",author:"Will Rogers"},
+];
+const QUESTIONS = [
+  {id:"need",  icon:"⚖️",question:"Need or want?",  detail:"Is this something you genuinely need, or just want in this moment?",         options:["I truly need it","Honestly, it\u2019s a want"],       caution:1},
+  {id:"thirty",icon:"📅",question:"The 30-day test",detail:"Will you still care about this purchase in 30 days?",                        options:["Yes, absolutely","Probably not"],                      caution:1},
+  {id:"better",icon:"🎯",question:"Better use?",    detail:"Could this money do something more meaningful \u2014 savings, bills, a goal?",options:["No, this is the best use","Yes, there\u2019s a better use"],caution:1},
+];
+const BUY_REASONS = ["It's a genuine necessity","It's a planned purchase","It's a special occasion","I've thought about it for a while","It fits within my budget","Other reason"];
+
+// ─── State ───────────────────────────────────────────────────────
+// KEY DESIGN: inputs read directly from DOM, not from state.
+// state.item / state.amount / state.buyComment are only written
+// when we LEAVE a screen, never on keypress. This prevents re-renders
+// from destroying the focused input and dismissing the keyboard.
+let S = {
+  tab:"gate", screen:"home",
+  item:"", amount:"",
+  answers:{}, currentQ:0,
+  history: (()=>{ try{return JSON.parse(localStorage.getItem("sg_h")||"[]")}catch{return []} })(),
+  quote:null, aiQuote:null, apiLoading:false,
+  showHistory:false, lastSavedIdx:null,
+  buyComment:"", buyReason:"",
+  confirmDelHist:null,
+  expandedMonth:null, confirmDelSaved:null,
+  expandedPurchase:null, editingPurchase:null, editComment:"", confirmDelPurchase:null,
+};
+
+function persist(){ try{localStorage.setItem("sg_h",JSON.stringify(S.history))}catch{} }
+function set(patch){ Object.assign(S,patch); render(); }
+function setHistory(h){ S.history=h; persist(); render(); }
+
+// Read live input values from DOM before acting
+function liveItem(){ return (document.getElementById("inp-item")||{value:S.item}).value.trim(); }
+function liveAmt(){  return (document.getElementById("inp-amt") ||{value:S.amount}).value; }
+function liveBuyComment(){ return (document.getElementById("inp-buy-comment")||{value:S.buyComment}).value; }
+function liveEditComment(){ return (document.getElementById("inp-edit-comment")||{value:S.editComment}).value; }
+
+const fmt = n => new Intl.NumberFormat("en-AU",{style:"currency",currency:"AUD"}).format(n||0);
+const mKey   = d => { const p=d.split("/"); return p.length===3?`${p[2]}-${p[1]}`:d; };
+const mLabel = k => { const [y,m]=k.split("-"); return new Date(+y,+m-1,1).toLocaleDateString("en-AU",{month:"long",year:"numeric"}); };
+const rand   = a => a[Math.floor(Math.random()*a.length)];
+
+function totals(){
+  const saved=S.history.filter(h=>h.type==="saved").reduce((s,h)=>s+h.amount,0);
+  const tx=S.history.filter(h=>h.type==="saved"&&h.monthTransferred).reduce((s,h)=>s+h.amount,0);
+  const cc=Object.values(S.answers).filter(v=>v==="caution").length;
+  return{saved,transferred:tx,cautionCount:cc};
+}
+
+// ─── DOM helpers ─────────────────────────────────────────────────
+function el(tag,attrs,...kids){
+  const e=document.createElement(tag);
+  for(const[k,v] of Object.entries(attrs||{})){
+    if(k==="class") e.className=v;
+    else if(k==="style"&&typeof v==="object") Object.assign(e.style,v);
+    else if(k.startsWith("on")) e.addEventListener(k.slice(2).toLowerCase(),v);
+    else if(k==="disabled"&&v) e.disabled=true;
+    else if(k!=="disabled") e.setAttribute(k,v);
+  }
+  kids.flat(9).forEach(c=>c!=null&&c!==false&&e.append(typeof c!=="object"?document.createTextNode(String(c)):c));
+  return e;
+}
+function div(cls,...kids){ return el("div",{class:cls},...kids); }
+function btn(cls,text,onClick,extra={}){ return el("button",{class:"btn "+cls,onClick,...extra},text); }
+function txt(t){ return document.createTextNode(t); }
+
+// ─── CSV Export ──────────────────────────────────────────────────
+function exportCSV(){
+  const mm={};
+  S.history.forEach(e=>{
+    const k=mKey(e.date);
+    if(!mm[k]) mm[k]={saved:0,bought:0,transferred:false};
+    if(e.type==="saved"){mm[k].saved+=e.amount;if(e.monthTransferred)mm[k].transferred=true;}
+    else if(e.type==="bought") mm[k].bought+=e.amount;
+  });
+  const lines=["SpendGate Export","","=== ALL DECISIONS ===",
+    "Date,Item,Amount (AUD),Decision,Reason / Comment,Transferred to Savings",
+    ...S.history.map(e=>`"${e.date}","${e.item}","${e.amount.toFixed(2)}","${e.type==="saved"?"Skipped":e.type==="bought"?"Purchased":"Waiting"}","${(e.comment||"").replace(/"/g,"''")}","${e.type==="bought"?"N/A":e.monthTransferred?"Yes":"No"}"`),
+    "","=== MONTHLY SUMMARY ===","Month,Saved (AUD),Spent (AUD),Transferred to Savings",
+    ...Object.keys(mm).sort().reverse().map(k=>`"${mLabel(k)}","${mm[k].saved.toFixed(2)}","${mm[k].bought.toFixed(2)}","${mm[k].transferred?"Yes":"No"}"`)
+  ];
+  const blob=new Blob([lines.join("\n")],{type:"text/csv;charset=utf-8;"});
+  const url=URL.createObjectURL(blob);
+  const a=document.createElement("a"); a.href=url; a.download=`SpendGate_${new Date().toISOString().slice(0,10)}.csv`; a.click();
+  URL.revokeObjectURL(url);
+}
+
+// ─── Actions ─────────────────────────────────────────────────────
+function resetFlow(){
+  set({screen:"home",item:"",amount:"",answers:{},currentQ:0,
+       quote:null,aiQuote:null,lastSavedIdx:null,buyComment:"",buyReason:"",apiLoading:false});
+}
+
+function goToQuestions(){
+  const amt=liveAmt(); const itm=liveItem();
+  if(!amt||parseFloat(amt)<=0) return;
+  S.item=itm; S.amount=amt;
+  set({screen:"questions",currentQ:0,answers:{}});
+}
+
+function handleAnswer(qIdx,ansIdx){
+  const isCaution=ansIdx===QUESTIONS[qIdx].caution;
+  S.answers[QUESTIONS[qIdx].id]=isCaution?"caution":"ok";
+  if(qIdx<QUESTIONS.length-1) setTimeout(()=>set({currentQ:qIdx+1}),280);
+  else setTimeout(()=>set({screen:"decision"}),280);
+  render();
+}
+
+function handleSkip(){
+  const amtVal=parseFloat(S.amount); if(!amtVal) return;
+  const entry={item:S.item||"Unnamed purchase",amount:amtVal,date:new Date().toLocaleDateString("en-AU"),type:"saved",monthTransferred:false};
+  S.history=[entry,...S.history].slice(0,200); persist();
+  S.lastSavedIdx=0; S.quote=rand(QUOTES); S.aiQuote=null; S.screen="celebrate";
+  render();
+  getAIQuote(S.item||"this item",amtVal);
+}
+
+function handleWait(){
+  const amtVal=parseFloat(S.amount);
+  const entry={item:S.item||"Unnamed purchase",amount:amtVal,date:new Date().toLocaleDateString("en-AU"),type:"waiting",revisitAt:Date.now()+86400000};
+  S.history=[entry,...S.history].slice(0,200); persist();
+  set({screen:"waiting"});
+}
+
+function goBuyReason(){
+  S.item=liveItem(); S.amount=liveAmt();
+  set({screen:"buy_reason",buyComment:"",buyReason:""});
+}
+
+function handleBuyConfirm(){
+  const amtVal=parseFloat(S.amount);
+  const comment=S.buyReason||liveBuyComment().trim()||"";
+  const entry={item:S.item||"Unnamed purchase",amount:amtVal,date:new Date().toLocaleDateString("en-AU"),type:"bought",comment};
+  S.history=[entry,...S.history].slice(0,200); persist();
+  resetFlow();
+}
+
+function handleTransferNow(){
+  S.history=S.history.map((h,i)=>i===S.lastSavedIdx?{...h,monthTransferred:true}:h); persist(); render();
+}
+
+function handleRevisitSkip(idx){
+  const h=S.history[idx];
+  const entry={item:h.item,amount:h.amount,date:new Date().toLocaleDateString("en-AU"),type:"saved",monthTransferred:false};
+  S.history=[entry,...S.history.filter((_,i)=>i!==idx)].slice(0,200); persist();
+  S.lastSavedIdx=0; S.quote=rand(QUOTES); S.aiQuote=null;
+  S.screen="celebrate"; S.item=h.item; S.amount=String(h.amount);
+  render();
+  getAIQuote(h.item,h.amount);
+}
+
+function handleRevisitBuy(idx){
+  const h=S.history[idx];
+  const entry={item:h.item,amount:h.amount,date:new Date().toLocaleDateString("en-AU"),type:"bought",comment:""};
+  S.history=[entry,...S.history.filter((_,i)=>i!==idx)].slice(0,200); persist();
+  resetFlow();
+}
+
+// ─── AI Quote ────────────────────────────────────────────────────
+async function getAIQuote(itemName,amtVal){
+  try{
+    const res=await fetch("https://api.anthropic.com/v1/messages",{
+      method:"POST",headers:{"Content-Type":"application/json"},
+      body:JSON.stringify({model:"claude-sonnet-4-20250514",max_tokens:1000,
+        messages:[{role:"user",content:`Someone just resisted buying "${itemName}" for ${fmt(amtVal)}. Write one short, warm, encouraging thought (1-2 sentences) celebrating their discipline. Make it feel personal and fresh — not a clichéd quote. No attribution. No quote marks.`}]})
+    });
+    const data=await res.json();
+    S.apiLoading=false;
+    S.aiQuote=data.content?.find(b=>b.type==="text")?.text||null;
+    // Only update quote block, don't re-render everything (would destroy focus if user is typing elsewhere)
+    const qb=document.getElementById("quote-slot");
+    if(qb){
+      qb.innerHTML="";
+      if(S.aiQuote){
+        const d=div("quote-block"); d.appendChild(el("div",{class:"quote-text"},S.aiQuote)); qb.appendChild(d);
+      }
+    }
+  }catch{ S.apiLoading=false; }
+}
+
+// ─── Coin Rain ───────────────────────────────────────────────────
+function coinRain(){
+  const wrap=div("coin-rain");
+  for(let i=0;i<12;i++){
+    const c=el("div",{class:"coin",style:{left:`${8+i*7.5}%`,animationDelay:`${i*0.08}s`,animationDuration:`${0.7+(i%3)*0.2}s`}},"💰");
+    wrap.appendChild(c);
+  }
+  return wrap;
+}
+
+// ─── Screen Builders ─────────────────────────────────────────────
+function buildHomeScreen(){
+  const {history,showHistory,confirmDelHist}=S;
+  const waiting=history.map((h,i)=>({...h,_idx:i})).filter(h=>h.type==="waiting");
+  const decisions=history.filter(h=>h.type!=="waiting");
+  const shown=(showHistory?decisions:decisions.slice(0,6));
+
+  const inputCard=div("card fade-in",
+    el("div",{class:"card-title"},"What are you about to buy?"),
+    div("input-group",
+      el("label",{class:"input-label"},"Item or description"),
+      // Note: NO onInput handler — value is read on action
+      el("input",{id:"inp-item",class:"input-field",placeholder:"e.g. New sneakers, takeaway\u2026",value:S.item,autocomplete:"off"})
+    ),
+    div("input-group",
+      el("label",{class:"input-label"},"Amount (AUD $)"),
+      el("input",{id:"inp-amt",class:"input-field amount-input",type:"number",placeholder:"0.00",value:S.amount,min:"0",inputmode:"decimal"})
+    ),
+    el("button",{class:"btn btn-primary",style:{marginTop:"4px"},onClick:goToQuestions},"Start the 3 questions \u2192")
+  );
+
+  const revisitCard=waiting.length===0?null:div("card revisit-card",
+    el("div",{class:"card-title",style:{marginBottom:"10px"}},"⏳ Waiting to revisit"),
+    ...waiting.map(wr=>{
+      const ready=Date.now()>=wr.revisitAt;
+      const diff=wr.revisitAt-Date.now();
+      const hrs=Math.floor(diff/3600000), mins=Math.floor((diff%3600000)/60000);
+      const timeStr=ready?"Ready to decide!":hrs>0?`${hrs}h ${mins}m remaining`:`${mins}m remaining`;
+      return div("revisit-item",
+        el("div",{class:"revisit-name"},wr.item),
+        div("revisit-meta",fmt(wr.amount)," \u00b7 ",el("span",{class:ready?"revisit-ready":"revisit-waiting"},timeStr)),
+        ready
+          ? div("revisit-btns",
+              el("button",{class:"revisit-btn-save",onClick:()=>handleRevisitSkip(wr._idx)},"💪 Save it"),
+              el("button",{class:"revisit-btn-buy", onClick:()=>handleRevisitBuy(wr._idx)},"Buy it"),
+              el("button",{class:"revisit-btn-del", onClick:()=>{S.history=S.history.filter((_,i)=>i!==wr._idx);persist();render();}},"✕")
+            )
+          : el("button",{class:"revisit-btn-del",onClick:()=>{S.history=S.history.filter((_,i)=>i!==wr._idx);persist();render();}},"✕ Remove")
+      );
+    })
+  );
+
+  const histCard=decisions.length===0?null:div("card",
+    el("div",{style:{display:"flex",justifyContent:"space-between",alignItems:"center",marginBottom:"10px"}},
+      el("div",{class:"card-title",style:{margin:"0"}},"Recent decisions"),
+      el("button",{class:"toggle-hist",onClick:()=>set({showHistory:!showHistory,confirmDelHist:null})},showHistory?"Hide":"Show all")
+    ),
+    ...shown.map(entry=>{
+      const realIdx=history.indexOf(entry);
+      return el("div",{},
+        div("history-item",
+          el("div",{style:{flex:"1",minWidth:"0"}},
+            el("div",{class:"history-name"},entry.item),
+            el("div",{class:"history-date"},entry.date+(entry.monthTransferred?" \u00b7 🏦":""))
+          ),
+          div("history-right",
+            el("div",{class:"history-amt"},fmt(entry.amount)),
+            el("span",{class:"history-badge "+(entry.type==="saved"?"badge-saved":"badge-bought")},entry.type==="saved"?"Saved ✓":"Bought"),
+            el("button",{class:"del-btn",onClick:()=>set({confirmDelHist:confirmDelHist===realIdx?null:realIdx})},"🗑️")
+          )
+        ),
+        confirmDelHist===realIdx
+          ? div("del-confirm-row",
+              el("span",{class:"del-confirm-text"},"Remove this entry?"),
+              el("div",{style:{display:"flex",gap:"6px"}},
+                el("button",{class:"del-yes",onClick:()=>{S.history=S.history.filter((_,i)=>i!==realIdx);persist();set({confirmDelHist:null});}},"Delete"),
+                el("button",{class:"del-no", onClick:()=>set({confirmDelHist:null})},"Cancel")
+              )
+            )
+          : null
+      );
+    })
+  );
+
+  return el("div",{},...[inputCard,revisitCard,histCard].filter(Boolean));
+}
+
+function buildQuestionsScreen(){
+  const {currentQ,answers}=S;
+  const q=QUESTIONS[currentQ];
+  const done=Object.keys(answers).length;
+  return div("fade-in",
+    div("card",
+      div("q-progress",...QUESTIONS.map((_,i)=>el("div",{class:"q-dot"+(i===currentQ?" active":i<currentQ?" done":"")}))),
+      el("span",{class:"q-icon"},q.icon),
+      el("div",{class:"q-text"},q.question),
+      el("div",{class:"q-detail"},q.detail),
+      ...q.options.map((opt,i)=>el("button",{class:"q-btn",onClick:()=>handleAnswer(currentQ,i)},
+        div("q-num",String.fromCharCode(65+i)),opt
+      ))
+    ),
+    el("div",{style:{textAlign:"center",fontSize:"0.7rem",color:"var(--light-ink)"}},
+      "Considering: ",el("strong",{},S.item||"your purchase")," \u2014 ",fmt(parseFloat(S.amount)||0))
+  );
+}
+
+function buildDecisionScreen(){
+  const cc=Object.values(S.answers).filter(v=>v==="caution").length;
+  const msg=cc>=2?"Your gut is saying no. 🛑":"You seem confident about this. 🤔";
+  const sub=cc===3?"All three checks flagged this. Your future self will thank you.":cc===2?"Two of three instincts said hold off. Worth listening to.":"Your answers suggest you've thought this through. Still \u2014 your call.";
+  return div("fade-in",div("card",
+    div("caution-bar",...[0,1,2].map(i=>el("div",{class:"caution-pip"+(i<cc?" lit":"")}))),
+    el("div",{class:"decision-msg"},msg),
+    el("div",{class:"decision-sub"},sub),
+    div("item-summary",el("strong",{},S.item||"This purchase")," \u2014 ",fmt(parseFloat(S.amount)||0)),
+    btn("btn-moss","💪 Skip it \u2014 save "+fmt(parseFloat(S.amount)||0),handleSkip,{style:{marginTop:"0"}}),
+    btn("btn-rust","Go ahead and buy it",goBuyReason),
+    btn("btn-wait","⏳ Wait 24 hours & revisit",handleWait),
+    btn("btn-ghost","Cancel",resetFlow)
+  ));
+}
+
+function buildBuyReasonScreen(){
+  // IMPORTANT: textarea has an id and NO onInput. Value read on confirm.
+  return div("fade-in",div("card",
+    el("div",{style:{fontSize:"1.6rem",marginBottom:"8px"}},"🛍️"),
+    el("div",{class:"card-title"},"Why are you buying this?"),
+    el("div",{style:{fontSize:"0.78rem",color:"var(--light-ink)",marginBottom:"14px",lineHeight:"1.5"}},"Recording your reason helps you spot patterns. Pick one or write your own."),
+    div("item-summary",el("strong",{},S.item||"This purchase")," \u2014 ",fmt(parseFloat(S.amount)||0)),
+    div("reason-chips",
+      ...BUY_REASONS.map(r=>el("button",{class:"reason-chip"+(S.buyReason===r?" active":""),
+        onClick:()=>{
+          // toggle chip — update state but DON'T re-render (would destroy textarea)
+          S.buyReason=S.buyReason===r?"":r;
+          document.querySelectorAll(".reason-chip").forEach((c,i)=>{
+            c.classList.toggle("active",BUY_REASONS[i]===S.buyReason);
+          });
+          // clear textarea if chip selected
+          const ta=document.getElementById("inp-buy-comment");
+          if(ta&&S.buyReason) ta.value="";
+        }},r))
+    ),
+    el("textarea",{id:"inp-buy-comment",class:"comment-textarea",placeholder:"Or write your own reason\u2026 (optional)",rows:"3"},S.buyComment),
+    btn("btn-rust","Confirm purchase",handleBuyConfirm,{style:{marginTop:"12px"}}),
+    btn("btn-ghost","\u2190 Back",()=>set({screen:"decision"}))
+  ));
+}
+
+function buildWaitingScreen(){
+  const due=new Date(Date.now()+86400000).toLocaleString("en-AU",{weekday:"short",hour:"2-digit",minute:"2-digit"});
+  return div("fade-in",div("card",el("div",{style:{textAlign:"center"}},
+    el("div",{style:{fontSize:"2.4rem",marginBottom:"8px"}},"⏳"),
+    el("div",{style:{fontFamily:"'Playfair Display',serif",fontSize:"1.2rem",color:"var(--earth)",marginBottom:"6px"}},"Good call. Sleep on it."),
+    el("div",{style:{fontSize:"0.8rem",color:"var(--light-ink)",lineHeight:"1.6",marginBottom:"16px"}},
+      "We've saved a reminder for ",el("strong",{},S.item||"this purchase")," (",fmt(parseFloat(S.amount)||0),"). Come back in 24 hours and decide with a clear head."),
+    el("div",{class:"wait-pill"},"Revisit due: ",due),
+    btn("btn-primary","Got it \u2014 back to home",resetFlow)
+  )));
+}
+
+function buildCelebrateScreen(){
+  const{saved:totalSaved}=totals();
+  const justTx=S.lastSavedIdx!==null&&S.history[S.lastSavedIdx]?.monthTransferred;
+  // Quote slot — filled immediately with fallback, then replaced by AI response
+  const quoteSlot=el("div",{id:"quote-slot"},
+    S.aiQuote
+      ? div("quote-block",el("div",{class:"quote-text"},S.aiQuote))
+      : S.quote
+        ? div("quote-block",el("div",{class:"quote-text"},S.quote.text),el("div",{class:"quote-author"},"\u2014 ",S.quote.author))
+        : div("quote-block",el("div",{class:"quote-text loading-dots"},"Thinking of something just for you",el("span",{},"·"),el("span",{},"·"),el("span",{},"·")))
+  );
+  return div("fade-in",
+    coinRain(),
+    div("card",el("div",{style:{textAlign:"center"}},
+      el("div",{style:{fontSize:"2.2rem",marginBottom:"5px"}},"🎉"),
+      el("div",{style:{fontSize:"0.68rem",color:"var(--light-ink)",textTransform:"uppercase",letterSpacing:"1px"}},"You just saved"),
+      el("div",{class:"celebrate-amount"},fmt(parseFloat(S.amount)||0)),
+      el("div",{style:{fontSize:"0.76rem",color:"var(--light-ink)"}},"Total vault: ",el("strong",{},fmt(totalSaved))),
+      quoteSlot,
+      justTx
+        ? div("transfer-done",{style:{marginBottom:"10px"}},"✅ Moved to savings account")
+        : el("button",{class:"transfer-cta",onClick:handleTransferNow},
+            el("div",{class:"transfer-cta-label"},"Ready to make it real?"),
+            el("div",{class:"transfer-cta-text"},"🏦 I\u2019ve moved ",fmt(parseFloat(S.amount)||0)," to my savings account")
+          ),
+      btn("btn-primary","Done ✓",resetFlow)
+    ))
+  );
+}
+
+function buildMonthlyTab(){
+  const{history,expandedMonth,confirmDelSaved}=S;
+  const mm={};
+  history.forEach((entry,i)=>{
+    if(entry.type==="waiting") return;
+    const k=mKey(entry.date);
+    if(!mm[k]) mm[k]={saved:0,bought:0,count:0,allTransferred:true,items:[]};
+    if(entry.type==="saved"){mm[k].saved+=entry.amount;mm[k].count++;mm[k].items.push({...entry,_idx:i});if(!entry.monthTransferred)mm[k].allTransferred=false;}
+    else if(entry.type==="bought") mm[k].bought+=entry.amount;
+  });
+  const months=Object.keys(mm).sort().reverse();
+  const maxSaved=Math.max(...months.map(k=>mm[k].saved),1);
+  const allTimeSaved=history.filter(h=>h.type==="saved").reduce((s,h)=>s+h.amount,0);
+  const allTimeTx=history.filter(h=>h.type==="saved"&&h.monthTransferred).reduce((s,h)=>s+h.amount,0);
+
+  if(!months.length) return div("card fade-in",el("div",{style:{textAlign:"center",padding:"40px 20px"}},
+    el("div",{style:{fontSize:"2rem",marginBottom:"10px"}},"📊"),
+    el("div",{style:{color:"var(--light-ink)",fontSize:"0.88rem",lineHeight:"1.6"}},"No savings yet. Skip your first purchase to see monthly data here!")
+  ));
+
+  return div("fade-in",
+    div("stat-grid",
+      div("stat-box",el("div",{class:"stat-label"},"All-time saved"),el("div",{class:"stat-val"},fmt(allTimeSaved))),
+      div("stat-box green",el("div",{class:"stat-label"},"Transferred ✓"),el("div",{class:"stat-val"},fmt(allTimeTx)))
+    ),
+    el("button",{class:"btn btn-export",style:{marginBottom:"14px"},onClick:exportCSV},"⬇️ Export to Excel / CSV"),
+    ...months.map(k=>{
+      const m=mm[k]; const isExp=expandedMonth===k;
+      return div("card",
+        div("month-header",
+          el("div",{},el("div",{class:"month-name"},mLabel(k)),el("div",{class:"month-sub"},`${m.count} purchase${m.count!==1?"s":""} skipped`+(m.bought>0?` \u00b7 ${fmt(m.bought)} spent`:""))),
+          el("div",{style:{textAlign:"right"}},
+            el("div",{class:"month-amt"},fmt(m.saved)),
+            el("button",{class:"month-toggle",onClick:()=>set({expandedMonth:isExp?null:k,confirmDelSaved:null})},isExp?`Hide items ▲`:`Show ${m.count} item${m.count!==1?"s":""}  ▼`)
+          )
+        ),
+        div("progress-bar",el("div",{class:"progress-fill",style:{background:m.allTransferred?"var(--moss)":"var(--gold)",width:`${(m.saved/maxSaved)*100}%`}})),
+        ...(isExp&&m.items.length?[div("",{style:{marginBottom:"12px",borderTop:"1px solid var(--warm)",paddingTop:"10px"}},
+          ...m.items.map(entry=>el("div",{},
+            div("saved-item-row",
+              el("div",{style:{flex:"1"}},el("div",{class:"saved-item-name"},entry.item),el("div",{class:"saved-item-date"},entry.date+(entry.monthTransferred?" \u00b7 🏦":""))),
+              el("div",{style:{display:"flex",alignItems:"center",gap:"6px",flexShrink:"0"}},
+                el("div",{class:"saved-item-amt"},fmt(entry.amount)),
+                el("button",{class:"del-btn",onClick:()=>set({confirmDelSaved:confirmDelSaved===entry._idx?null:entry._idx})},"🗑️")
+              )
+            ),
+            confirmDelSaved===entry._idx
+              ? div("del-confirm-row",
+                  el("span",{class:"del-confirm-text"},"Remove this saved entry?"),
+                  el("div",{style:{display:"flex",gap:"6px"}},
+                    el("button",{class:"del-yes",onClick:()=>{S.history=S.history.filter((_,i)=>i!==entry._idx);persist();set({confirmDelSaved:null})}},"Delete"),
+                    el("button",{class:"del-no", onClick:()=>set({confirmDelSaved:null})},"Cancel")
+                  )
+                )
+              : null
+          ))
+        )]:[]),
+        m.saved>0?(m.allTransferred
+          ?div("transfer-done","✅ Transferred to savings account")
+          :el("button",{class:"btn-transfer",onClick:()=>{S.history=S.history.map(e=>mKey(e.date)===k&&e.type==="saved"?{...e,monthTransferred:true}:e);persist();render();}},"🏦 I\u2019ve moved ",fmt(m.saved)," to my savings account")
+        ):null
+      );
+    })
+  );
+}
+
+function buildPurchasesTab(){
+  const{history,expandedPurchase,editingPurchase,confirmDelPurchase}=S;
+  const purchases=history.map((h,i)=>({...h,_idx:i})).filter(h=>h.type==="bought");
+  const totalSpent=purchases.reduce((s,h)=>s+h.amount,0);
+  const noComment=purchases.filter(h=>!h.comment).length;
+  const mm={};
+  purchases.forEach(h=>{const k=mKey(h.date);if(!mm[k])mm[k]=[];mm[k].push(h);});
+  const months=Object.keys(mm).sort().reverse();
+
+  if(!purchases.length) return div("card fade-in",el("div",{style:{textAlign:"center",padding:"40px 20px"}},
+    el("div",{style:{fontSize:"2rem",marginBottom:"10px"}},"🛍️"),
+    el("div",{style:{color:"var(--light-ink)",fontSize:"0.88rem",lineHeight:"1.6"}},"No purchases logged yet. When you choose to buy something after the questions, it'll appear here.")
+  ));
+
+  return div("fade-in",
+    div("stat-grid",
+      div("stat-box rust",el("div",{class:"stat-label"},"Total spent"),el("div",{class:"stat-val"},fmt(totalSpent))),
+      div("stat-box bark",el("div",{class:"stat-label"},"Purchases"),el("div",{class:"stat-val"},purchases.length," ",el("span",{style:{fontSize:"0.7rem",fontWeight:"400",opacity:"0.7"}},"items")))
+    ),
+    ...(noComment>0?[div("nudge-banner",`💬 ${noComment} purchase${noComment!==1?"s":""} without a reason yet \u2014 tap to add one`)]:[]),
+    ...months.map(k=>el("div",{style:{marginBottom:"6px"}},
+      el("div",{class:"month-divider"},mLabel(k)),
+      ...mm[k].map(entry=>{
+        const isExp=expandedPurchase===entry._idx;
+        const isEdit=editingPurchase===entry._idx;
+        const isDel=confirmDelPurchase===entry._idx;
+        return div("purchase-card",
+          el("div",{class:"purchase-header",onClick:()=>{ if(isDel) return; set({expandedPurchase:isExp?null:entry._idx,editingPurchase:null,confirmDelPurchase:null}); }},
+            el("div",{style:{flex:"1",minWidth:"0"}},
+              el("div",{class:"purchase-name"},entry.item),
+              div("purchase-meta",entry.date," ",entry.comment?el("span",{class:"comment-pill"},"💬 has note"):el("span",{class:"comment-pill empty"},"+ add reason"))
+            ),
+            div("purchase-right",
+              el("div",{class:"purchase-amt"},fmt(entry.amount)),
+              el("button",{class:"del-btn",onClick:e=>{e.stopPropagation();set({confirmDelPurchase:isDel?null:entry._idx,expandedPurchase:entry._idx})}},"🗑️")
+            )
+          ),
+          isDel
+            ? div("del-confirm-inner",
+                el("span",{style:{fontSize:"0.82rem",color:"var(--ink)",fontWeight:"600"}},"Remove this entry?"),
+                div("btn-row",
+                  el("button",{class:"del-yes",onClick:()=>{S.history=S.history.filter((_,i)=>i!==entry._idx);persist();set({confirmDelPurchase:null,expandedPurchase:null})}},"Yes, delete"),
+                  el("button",{class:"del-no", onClick:()=>set({confirmDelPurchase:null})},"Cancel")
+                )
+              )
+            : isExp
+              ? div("purchase-expanded",
+                  isEdit
+                    ? el("div",{},
+                        div("reason-chips",...BUY_REASONS.map(r=>el("button",{class:"reason-chip"+(S.editComment===r?" active":""),
+                          onClick:()=>{
+                            S.editComment=S.editComment===r?"":r;
+                            document.querySelectorAll("#purchase-edit-chips .reason-chip").forEach((c,i)=>{c.classList.toggle("active",BUY_REASONS[i]===S.editComment);});
+                            const ta=document.getElementById("inp-edit-comment"); if(ta&&S.editComment) ta.value="";
+                          }},r))),
+                        // id on textarea so we can read it without re-render
+                        el("textarea",{id:"inp-edit-comment",class:"comment-textarea",placeholder:"Or write your own reason\u2026",rows:"3"},S.editComment),
+                        div("btn-row",
+                          el("button",{class:"btn-save-comment",onClick:()=>{
+                            const newComment=S.editComment||liveEditComment().trim();
+                            S.history=S.history.map((he,i)=>i===entry._idx?{...he,comment:newComment}:he); persist();
+                            set({editingPurchase:null,editComment:""});
+                          }},"Save note"),
+                          el("button",{class:"btn-cancel-comment",onClick:()=>set({editingPurchase:null,editComment:""})},"Cancel")
+                        )
+                      )
+                    : el("div",{},
+                        entry.comment
+                          ? div("existing-comment",el("div",{class:"existing-comment-label"},"Your reason"),el("div",{class:"existing-comment-text"},"\u201c",entry.comment,"\u201d"))
+                          : el("div",{class:"no-comment-msg"},"No reason recorded for this purchase."),
+                        el("button",{class:"btn-edit-comment",onClick:e=>{e.stopPropagation();set({editingPurchase:entry._idx,editComment:entry.comment||""});}},"✏️ "+(entry.comment?"Edit reason":"Add reason"))
+                      )
+                )
+              : null
+        );
+      })
+    ))
+  );
+}
+
+// ─── Main Render ─────────────────────────────────────────────────
+function render(){
+  const{tab,screen}=S;
+  const{saved:totalSaved,transferred:totalTransferred}=totals();
+
+  // Header (static, only render once)
+  const ha=document.getElementById("header-area");
+  if(!ha.hasChildNodes()){
+    ha.innerHTML=`<div class="header"><div class="header-icon">🏦</div><h1>SpendGate</h1><p>Think before you spend</p></div>`;
+  }
+
+  // Vault — update text nodes directly to avoid touching inputs
+  const va=document.getElementById("vault-area");
+  va.innerHTML=`
+    <div class="vault-card">
+      <div class="vault-label">Total Saved</div>
+      <div class="vault-amount">${fmt(totalSaved)}</div>
+      <div class="vault-sub">${S.history.filter(h=>h.type==="saved").length} purchases resisted</div>
+      ${totalSaved>0?`<div class="vault-row">
+        <div><div class="vault-mini-label">In vault</div><div class="vault-mini-val">${fmt(totalSaved-totalTransferred)}</div></div>
+        <div><div class="vault-mini-label">Transferred ✓</div><div class="vault-mini-val">${fmt(totalTransferred)}</div></div>
+      </div>`:""}
+    </div>`;
+
+  // Tab bar
+  const ta=document.getElementById("tab-bar-area");
+  ta.innerHTML=`<div class="tab-bar">
+    <button class="tab-btn${tab==="gate"?" active":""}" onclick="set({tab:'gate'})">🛑 Gate</button>
+    <button class="tab-btn${tab==="monthly"?" active":""}" onclick="set({tab:'monthly'})">📊 Savings</button>
+    <button class="tab-btn${tab==="purchases"?" active":""}" onclick="set({tab:'purchases'})">🛍️ Purchases</button>
+  </div>`;
+
+  // Content
+  const ca=document.getElementById("content-area");
+  ca.innerHTML="";
+
+  let content;
+  if(tab==="gate"){
+    if(screen==="home")        content=buildHomeScreen();
+    else if(screen==="questions") content=buildQuestionsScreen();
+    else if(screen==="decision")  content=buildDecisionScreen();
+    else if(screen==="buy_reason")content=buildBuyReasonScreen();
+    else if(screen==="waiting")   content=buildWaitingScreen();
+    else if(screen==="celebrate") content=buildCelebrateScreen();
+  } else if(tab==="monthly"){
+    content=buildMonthlyTab();
+  } else {
+    content=buildPurchasesTab();
+  }
+  if(content) ca.appendChild(content);
+}
+
+// expose set globally for inline onclick in tab bar
+window.set=set;
+
+render();
+</script>
+</body>
+</html>
